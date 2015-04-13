@@ -1,0 +1,32 @@
+#Used to create puppet agent dir
+require 'erb'
+
+class Agent_setting
+  PUPPET_DIR = "/etc/puppet"
+  @id = nil
+  @settings = nil
+  
+  def initialize(id)
+    @id = id
+    @settings = Hash.new
+    @path = "#{PUPPET_DIR}/manifests/nodes/#{@id}"
+    #create empty vm setting dir
+    if(!File.exist?("#{@path}"))
+     Dir.mkdir("#{@path}")
+    end
+    configure_init_pp
+  end
+
+  def configure_init_pp
+    #create puppet agent initial settings
+    init_erb = ERB.new(File.read("erb/init.erb"))
+    File.delete("#{@path}/init.pp") if File.exist?("#{@path}/init.pp")
+    init_pp = File.new("#{@path}/init.pp","w")
+    init_pp.write(init_erb.result binding)
+    init_pp.close
+  end
+  
+  def add_app(key,app)
+    @settings[key] = app
+  end
+end

@@ -1,0 +1,6 @@
+node '<%=@id%>' {
+  include 'myfw'
+   <% @settings.each { |key,values|%>
+  import '<%=values%>.pp'<% "\n"%>
+   <%}%>
+ }

@@ -1,0 +1,7 @@
+node '<%=@id%>' {
+  include 'myfw'
+  import 'extra_fw_rules'	
+  <% @settings.each { |key,values|%>
+  import '<%=values%>'<% "\n"%>
+  <%}%>
+}
