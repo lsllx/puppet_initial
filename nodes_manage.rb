@@ -1,4 +1,4 @@
-#Used to create puppet agent dir
+#Used to create puppet agent dirx
 require 'erb'
 require 'rubygems'
 require 'json'
@@ -7,8 +7,7 @@ class Firewall_rule
   @description
   @rule_propertys
 
-  attr_accessor:description
-  attr_accessor:rule_properties
+  attr_accessor :description,:rule_properties
 
   def initialize
   end
@@ -34,7 +33,7 @@ class Agent_setting
     if(!File.exist?("#{@path}"))
      Dir.mkdir("#{@path}")
     end
-    rules_file = File.open("#{@path}/extra_fw_rules",File::CREAT||File::READ)  
+    rules_file = File.open("#{@path}/extra_fw_rules.conf",File::CREAT||File::READ)  
     rules_file.read.strip.split("firewall").each do  |rule|
       next if rule.empty?
       #extract filewall data from rule string wtih the regular expression
@@ -121,7 +120,7 @@ class Agent_setting
       output.concat("}\n")
     end
     puts output
-    File.open("#{@path}/extra_fw_rules","w+") do |file|
+    File.open("#{@path}/extra_fw_rules.conf","w+") do |file|
           file.puts(output)
     end
   end
@@ -132,6 +131,7 @@ class Agent_setting
   end
 end
 
-setting = Agent_setting.new("8a8a9e024c7dc717014c7e50b812000f.cs1cloud.internal")
-setting.add_new_port("007","10.1.11.0/24","7770","icmp","test for it")
-puts setting.get_all_firewall_rules
+#setting = Agent_setting.new("8a8a9e024c7dc717014c7e50b812000f.cs1cloud.internal")
+#setting.add_new_port("007","10.1.11.0/24","7770","icmp","test for it")
+#
+#puts setting.get_all_firewall_rules

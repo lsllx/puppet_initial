@@ -7,7 +7,6 @@ class ClientInitial
   NAME_POSTFIX = '.cs1cloud.internal'
   
   def initialize(vmid,ip,user,password)
-    
     unless (vmid&&ip&&user&&password)
       puts "invalid parameter"
       return
