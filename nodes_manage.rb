@@ -60,7 +60,7 @@ class Agent_setting
   
   def configure_init_pp
     #create puppet agent initial settings
-    init_erb = ERB.new(File.read("erb/init.erb"))
+    init_erb = ERB.new(File.read("#{File.dirname(__FILE__)}/erb/init.erb"))
     File.delete("#{@path}/init.pp") if File.exist?("#{@path}/init.pp")
     init_pp = File.new("#{@path}/init.pp","w")
     init_pp.write(init_erb.result binding)

@@ -1,13 +1,13 @@
 require 'rubygems'
 require 'net/ssh'
-require 'nodes_manage'
+require File.expand_path('../nodes_manage', __FILE__)
+require 'ping'
 
 class ClientInitial
 
   NAME_POSTFIX = '.cs1cloud.internal'
   
   def initialize(vmid,ip,user,password)
-    
     unless (vmid&&ip&&user&&password)
       puts "invalid parameter"
       return
@@ -20,8 +20,8 @@ class ClientInitial
     connect = false
     @times = 10
     puts "Waiting system start..."
-    sleep 1
     puts "Connect to host:#{ip}."
+    sleep 30
     10.times do
       begin
         Net::SSH.start(ip,user, :password => password) do |ssh|
@@ -46,7 +46,11 @@ class ClientInitial
             @status = false
             return
           end
+          
           ssh.exec! "rm -rf /var/lib/puppet/ssl)"
+          output = ssh.exec! "ruby /etc/puppet/initial_settings.rb testpupppet"
+          puts output
+          sleep 10
           output = ssh.exec!("ruby /etc/puppet/initial_settings.rb restartpuppet")
           puts output
           if output.chomp.end_with? "-1"
@@ -63,7 +67,7 @@ class ClientInitial
           puts $!
           return
         end
-        sleep 5
+        sleep 30
         @times -=1
         puts "Reconnect target VM(times: #{10-@times})"
       end
