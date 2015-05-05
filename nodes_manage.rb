@@ -2,6 +2,7 @@
 require 'erb'
 require 'rubygems'
 require 'json'
+require 'fileutils'
 
 class Firewall_rule
   @description
@@ -51,13 +52,51 @@ class Agent_setting
             key = index==1?rule_properties[0]:rule_properties[index-1].rpartition(",")[2]
             rule_set[key] = property.rpartition(",")[0]
           end
-        end
+          endn
         @firewall[rule_id].rule_properties  = rule_set
-    end
-    p @firewall
+        end
+        end
+    #p @firewall
     configure_init_pp
+    add_init_to_site
+  end
+
+  def remove_puppet_agent
+    delete_init_from_site
+    remove_dir
+    clean_cert
   end
   
+  def remove_dir
+        FileUtils.rm_rf "#{@path}"
+  end
+
+  def clean_cert
+    `puppet cert clean #{@id}`
+  end
+  
+  def add_init_to_site
+    site = ""
+    File.open("#{PUPPET_DIR}/manifests/site.pp","r") do |file|
+      site = file.read
+    end
+    site.insert site.rindex("}"),"\timport\t\"nodes/#{@id}/init.pp\"\n"
+    File.open("#{PUPPET_DIR}/manifests/site.pp","w") do |file|
+      file.puts(site)
+    end
+  end
+
+  def delete_init_from_site
+    site =""
+    File.open("#{PUPPET_DIR}/manifests/site.pp","r") do |file|
+      site = file.read
+    end
+    site.gsub!( /(\s+import\s+\"nodes\/#{@id}\/init.pp\"\s*)$/,"")
+    File.open("#{PUPPET_DIR}/manifests/site.pp","w") do |file|
+      file.puts(site)
+    end
+  end
+
   def configure_init_pp
     #create puppet agent initial settings
     init_erb = ERB.new(File.read("#{File.dirname(__FILE__)}/erb/init.erb"))
@@ -81,8 +120,10 @@ class Agent_setting
     end
     string.chop!
     string.concat("]}")
-    puts  string
+    #puts  string
   end
+
+  
   def add_new_port(id,source,port,protocol,description)
     #source address regex rule
     reg_source = /\A[!]?((?:(?:25[0-5]|((2[0-4]\d)|(1\d{2})|(\d\d)|(\d)))\.){3}(?:25[0-5]|((2[0-4]\d)|(1\d{2}))|(\d\d)|(\d))\/(?:(?:3[0-1]|[1-2][\d]|[\d])))\z/
@@ -119,7 +160,7 @@ class Agent_setting
       end
       output.concat("}\n")
     end
-    puts output
+    #puts output
     File.open("#{@path}/extra_fw_rules.conf","w+") do |file|
           file.puts(output)
     end
@@ -135,3 +176,7 @@ end
 #setting.add_new_port("007","10.1.11.0/24","7770","icmp","test for it")
 #
 #puts setting.get_all_firewall_rules
+#Agent_setting.delete_init_from_site
+#Agent_setting.clean_cert
+#setting = Agent_setting.new("8a8a16c44ce53df3014ce557666f0015.cs1cloud.internal")
+#setting.remove_puppet_agent
