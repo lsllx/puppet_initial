@@ -1,11 +1,13 @@
 node '<%=@id%>' {
   include 'myfw'
-  import 'extra_fw_rules.conf'	
   <% @settings.each { |key,values|%>
   import '<%=values%>'<% "\n"%>
   <%}%>
   class{ 'docker':
     socket_bind => 'unix://var/run/docker.sock --insecure-registry 10.1.11.194:5000'
   }
-
+  #firewall_settings 
+  #all these settings between start and end were created by auto system
+  #start
+  #end
 }
