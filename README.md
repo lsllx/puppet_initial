@@ -1,6 +1,8 @@
 #**这个文件主要为了说明每个脚本的作用，方便大家去熟悉**
  >client_console.rb主要接收来自于Scloud的命令，命令的格式如下：
+ 
  >`ruby client_console.rb option id targetip username password suboption [args] ` 
+ 
  >具体的使用方式可以参考我在scloud中写的执行类（VMManager/type包中）
 
   >nodes_manage.rb主要是主要是对每台虚机的puppet配置文件进行管理的，包括初始的引用包，防火墙规则的读取新增和修改，以后可能还会添加应用配置规则相关的东西。初始化的模版在erb文件夹下
