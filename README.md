@@ -1,4 +1,4 @@
-#**这个文件主要为了说明每个脚本的作用，方便大家去熟悉**
+##**这个文件主要为了说明每个脚本的作用，方便大家去熟悉（初学ruby，脚本本身比较简单，有问题随时找我）**
  >client_console.rb主要接收来自于Scloud的命令，命令的格式如下：
  
  >`ruby client_console.rb option id targetip username password suboption [args] ` 
